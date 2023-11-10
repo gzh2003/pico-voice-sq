@@ -135,7 +135,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p>In addition, we’ll explore the decision-making process behind selecting a classification threshold and briefly discuss the implications of the area under the curve (AUC) for varying receiver operating characteristic (ROC) curves.</p>
 <p>It should be noted that this article uses a modified version of the digits dataset provided by sci-kit learn.</p>
 <p>Our version of the digits dataset converts the target lists for the classification task to boolean values, such that they are only valid for the digit “3” and invalid for all other digits – restricting our data to two classes.</p>
-<div class="cell" data-execution_count="2">
+<div class="cell" data-execution_count="14">
 <details>
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Loading and processing digits dataset</span></span>
@@ -163,7 +163,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p>False-Positive Rate (1-specificity):</p>
 <p><span class="math inline">FP/(FP+TN)</span></p>
 <p>The plot below is an example of a ROC curve produced using our version of the digits dataset.</p>
-<div class="cell" data-execution_count="3">
+<div class="cell" data-execution_count="15">
 <details>
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Create classifier: RF </span></span>
@@ -176,10 +176,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>clf_pred <span class="op">=</span> clf.predict_proba(X_test)</span>
 <span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>fpr, tpr, thresholds <span class="op">=</span> metrics.roc_curve(y_test_mod, clf_pred[:,<span class="dv">1</span>])</span>
-<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>plt.figure(figsize<span class="op">=</span>(<span class="dv">5</span>,<span class="dv">3</span>))</span>
-<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>plt.plot(fpr, tpr, linewidth<span class="op">=</span><span class="dv">2</span>, label<span class="op">=</span><span class="st">"ROC curve"</span>)</span>
-<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">'False Positive Rate (Sensitivity)'</span>)</span>
-<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>plt.ylabel(<span class="st">'True Positive Rate (1-Specificity)'</span>)</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">"ROC Curve"</span>)</span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>plt.plot(fpr, tpr, linewidth<span class="op">=</span><span class="dv">2</span>)</span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">"False Positive Rate (Sensitivity)"</span>)</span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>plt.ylabel(<span class="st">"True Positive Rate (1-Specificity)"</span>)</span>
 <span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
@@ -193,7 +193,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p>For a given test, we have a classification <strong>threshold</strong> for which any items above the threshold are part of the positive class and any items below the threshold are part of the negative class.</p>
 <p>As mentioned previously, the ROC curve visualizes how sensitivity and specificity are negatively correlated to each other with respect to these changes in the classification threshold.</p>
 <p>Consider the plots of our digits datasets with varying thresholds below:</p>
-<div class="cell" data-execution_count="4">
+<div class="cell" data-execution_count="16">
 <details>
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>diff_fpr_tpr <span class="op">=</span> tpr <span class="op">-</span> fpr</span>
@@ -202,21 +202,21 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>index_l <span class="op">=</span> (thresholds <span class="op">&gt;=</span> <span class="fl">0.1</span>).argmin() <span class="co"># min index at cut off 0.1</span></span>
 <span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>threshold_index <span class="op">=</span> [index_h,index_m,index_l] </span>
 <span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>f, axes <span class="op">=</span> plt.subplots(<span class="dv">3</span>, <span class="dv">2</span>, figsize<span class="op">=</span>(<span class="dv">8</span>, <span class="dv">10</span>))</span>
-<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>f.tight_layout()</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>f, axes <span class="op">=</span> plt.subplots(<span class="dv">3</span>, <span class="dv">2</span>, figsize<span class="op">=</span>(<span class="dv">9</span>, <span class="dv">12</span>), constrained_layout<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>f.suptitle(<span class="st">"Plot of Roc Curve and Confusion Matrix At Varying Thresholds"</span>)</span>
 <span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">3</span>):</span>
-<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>    cf_matrix <span class="op">=</span> metrics.confusion_matrix(y_test_mod, (clf_pred[:,<span class="dv">1</span>] <span class="op">&gt;=</span> thresholds[threshold_index[i]]).astype(<span class="st">'int'</span>))</span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>    cf_matrix <span class="op">=</span> metrics.confusion_matrix(y_test_mod, (clf_pred[:,<span class="dv">1</span>] <span class="op">&gt;=</span> thresholds[threshold_index[i]]).astype(<span class="st">"int"</span>))</span>
 <span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>    cf_disp <span class="op">=</span> metrics.ConfusionMatrixDisplay(cf_matrix)</span>
 <span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>    cf_disp.plot(ax<span class="op">=</span>axes[i][<span class="dv">1</span>])</span>
 <span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>    cf_disp.im_.colorbar.remove()</span>
 <span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>    out_str <span class="op">=</span> <span class="bu">str</span>(thresholds[threshold_index[i]])</span>
-<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>    axes[i][<span class="dv">1</span>].set_xlabel(<span class="st">''</span>)</span>
-<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>    axes[i][<span class="dv">1</span>].set_ylabel(<span class="st">''</span>)</span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>    axes[i][<span class="dv">1</span>].set_xlabel(<span class="st">""</span>)</span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>    axes[i][<span class="dv">1</span>].set_ylabel(<span class="st">""</span>)</span>
 <span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>    axes[i,<span class="dv">1</span>].set_title(<span class="st">'Threshold: '</span> <span class="op">+</span> out_str)</span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>    axes[i,<span class="dv">1</span>].set_title(<span class="st">"Threshold: "</span> <span class="op">+</span> out_str)</span>
 <span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a>    axes[i,<span class="dv">0</span>].plot(fpr, tpr, linewidth<span class="op">=</span><span class="dv">2</span>, label<span class="op">=</span><span class="st">"ROC curve"</span>)</span>
-<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a>    axes[i,<span class="dv">0</span>].plot(fpr[threshold_index[i]],tpr[threshold_index[i]],<span class="st">'o'</span>)</span>
-<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a>    axes[i,<span class="dv">0</span>].<span class="bu">set</span>(xlabel<span class="op">=</span><span class="st">'False Positive Rate (Sensitivity)'</span>, ylabel<span class="op">=</span><span class="st">'True Positive Rate (1-Specificity)'</span>)</span>
+<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a>    axes[i,<span class="dv">0</span>].plot(fpr[threshold_index[i]],tpr[threshold_index[i]],<span class="st">"o"</span>)</span>
+<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a>    axes[i,<span class="dv">0</span>].<span class="bu">set</span>(xlabel<span class="op">=</span><span class="st">"False Positive Rate (Sensitivity)"</span>, ylabel<span class="op">=</span><span class="st">"True Positive Rate (1-Specificity)"</span>)</span>
 <span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
@@ -232,21 +232,19 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p>We observed the effects of changes in threshold on both sensitivity and specificity using the ROC curve in the previous example.</p>
 <p>However, when it comes to selecting a threshold, we must consider the classification model on a case-by-case basis.</p>
 <p>To select the ideal classification threshold, it’s crucial to consider the context of the classification model.</p>
-<div class="cell" data-execution_count="5">
+<div class="cell" data-execution_count="17">
 <details>
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>plt.figure(figsize<span class="op">=</span>(<span class="dv">5</span>,<span class="dv">3</span>))</span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>plt.plot(fpr, tpr, linewidth<span class="op">=</span><span class="dv">2</span>, label<span class="op">=</span><span class="st">"ROC curve"</span>)</span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">'False Positive Rate (Sensitivity)'</span>)</span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>plt.ylabel(<span class="st">'True Positive Rate (1-Specificity)'</span>)</span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">3</span>):</span>
-<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>    plt.plot(fpr[threshold_index[i]],tpr[threshold_index[i]],<span class="st">'o'</span>)</span>
-<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>    plt.annotate(<span class="st">"Point "</span><span class="op">+</span><span class="bu">str</span>(i<span class="op">+</span><span class="dv">1</span>),(fpr[threshold_index[i]],tpr[threshold_index[i]]),</span>
-<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>                xytext<span class="op">=</span>(fpr[threshold_index[i]]<span class="op">+</span><span class="fl">0.1</span>,tpr[threshold_index[i]]<span class="op">-</span><span class="fl">0.1</span>),arrowprops<span class="op">=</span><span class="bu">dict</span>(arrowstyle<span class="op">=</span><span class="st">"-&gt;"</span>))</span>
-<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>plt.plot(fpr, tpr, linewidth<span class="op">=</span><span class="dv">2</span>, label<span class="op">=</span><span class="st">"ROC curve"</span>)</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">"False Positive Rate (Sensitivity)"</span>)</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>plt.ylabel(<span class="st">"True Positive Rate (1-Specificity)"</span>)</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">3</span>):</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>    plt.plot(fpr[threshold_index[i]],tpr[threshold_index[i]],<span class="st">"o"</span>)</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>    plt.annotate(<span class="st">"Point "</span><span class="op">+</span><span class="bu">str</span>(i<span class="op">+</span><span class="dv">1</span>)<span class="op">+</span><span class="st">" (Threshold "</span><span class="op">+</span><span class="bu">str</span>(thresholds[threshold_index[i]])<span class="op">+</span><span class="st">")"</span>,(fpr[threshold_index[i]],tpr[threshold_index[i]]),</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>                xytext<span class="op">=</span>(fpr[threshold_index[i]]<span class="op">+</span><span class="fl">0.1</span>,tpr[threshold_index[i]]<span class="op">-</span><span class="fl">0.1</span>),arrowprops<span class="op">=</span><span class="bu">dict</span>(arrowstyle<span class="op">=</span><span class="st">"-&gt;"</span>))</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-display">
 <p><img src="roc_files/figure-html/cell-6-output-1.png" class="img-fluid"></p>
@@ -263,16 +261,17 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p>Similarly to how the ROC curve gives a quick visual representation of the relationship between TPR and FPR, it also helps us understand the classifier’s accuracy.</p>
 <p>One way to compare classifiers is to calculate the area under the curve (AUC).</p>
 <p>The plot generated below compares our classifier with a random and ideal classifier.</p>
-<div class="cell" data-execution_count="6">
+<div class="cell" data-execution_count="18">
 <details>
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>plt.figure(figsize<span class="op">=</span>(<span class="dv">5</span>,<span class="dv">3</span>))</span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>plt.plot(fpr, tpr, linewidth<span class="op">=</span><span class="dv">2</span>, label<span class="op">=</span>(<span class="st">"RF classifier - AUC "</span><span class="op">+</span><span class="bu">str</span>(metrics.auc(fpr,tpr))[:<span class="dv">4</span>]))</span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>plt.plot([<span class="dv">0</span>, <span class="dv">1</span>], [<span class="dv">0</span>, <span class="dv">1</span>], <span class="st">'--'</span>, label<span class="op">=</span><span class="st">"Random Classifier - AUC 0.5"</span>)</span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>plt.plot([<span class="dv">0</span>,<span class="dv">0</span>, <span class="dv">1</span>], [<span class="dv">0</span>,<span class="dv">1</span>, <span class="dv">1</span>],<span class="st">'-.'</span>, label<span class="op">=</span><span class="st">"Ideal Classifier - AUC 1.0"</span>)</span>
-<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>plt.legend()</span>
-<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>plt.plot(fpr, tpr, linewidth<span class="op">=</span><span class="dv">2</span>, label<span class="op">=</span>(<span class="st">"RF classifier - AUC "</span><span class="op">+</span><span class="bu">str</span>(metrics.auc(fpr,tpr))[:<span class="dv">4</span>]))</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>plt.plot([<span class="dv">0</span>, <span class="dv">1</span>], [<span class="dv">0</span>, <span class="dv">1</span>], <span class="st">"--"</span>, label<span class="op">=</span><span class="st">"Random Classifier - AUC 0.5"</span>)</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>plt.plot([<span class="dv">0</span>,<span class="dv">0</span>, <span class="dv">1</span>], [<span class="dv">0</span>,<span class="dv">1</span>, <span class="dv">1</span>],<span class="st">"-."</span>, label<span class="op">=</span><span class="st">"Ideal Classifier - AUC 1.0"</span>)</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">"False Positive Rate (Sensitivity)"</span>)</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>plt.ylabel(<span class="st">"True Positive Rate (1-Specificity)"</span>)</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>plt.legend()</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-display">
 <p><img src="roc_files/figure-html/cell-7-output-1.png" class="img-fluid"></p>
